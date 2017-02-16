@@ -32,7 +32,7 @@ module.exports = function(source) {
   // Create the import cache just once. Subsequent runs will continue to use
   // this cache instead of building a new one.
   if ( !importCache ) {
-	  importCache = new ImportCache(this, options);
+    importCache = new ImportCache(this, options);
   }
   
   // Attach `importCache` to `options` so that the `Evaluator` can access it.
