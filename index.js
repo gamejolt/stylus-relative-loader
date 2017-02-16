@@ -10,6 +10,10 @@ var resolver = require('./lib/resolver');
 
 var debug = require('debug')('stylus-relative-loader:index');
 
+// Will store this globally so we don't lose the import cache on multiple
+// runs.
+var importCache;
+
 function needsArray(value) {
   return Array.isArray(value) ? value : [value];
 }
@@ -25,8 +29,14 @@ module.exports = function(source) {
   options.filename = options.filename || this.resourcePath;
   options.Evaluator = CachedPathEvaluator;
 
+  // Create the import cache just once. Subsequent runs will continue to use
+  // this cache instead of building a new one.
+  if ( !importCache ) {
+	  importCache = new ImportCache(this, options);
+  }
+  
   // Attach `importCache` to `options` so that the `Evaluator` can access it.
-  var importCache = options.importCache = new ImportCache(this, options);
+  options.importCache = importCache;
 
   var configKey = options.config || 'stylus';
   var stylusOptions = this.options[configKey] || {};
